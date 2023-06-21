@@ -23,6 +23,6 @@ public class StudentController {
         System.out.println(name);
         System.out.println(score);
 
-        return new R("200", "success", data);
+        return new R("200", "success", jsonObject);
     }
 }
