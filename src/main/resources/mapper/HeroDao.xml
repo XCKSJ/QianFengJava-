@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.demo08.dao.HeroDao">
+
+    <resultMap type="com.qf.demo08.entity.Hero" id="HeroMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="times" column="times" jdbcType="INTEGER"/>
+        <result property="pic" column="pic" jdbcType="INTEGER"/>
+        <result property="win" column="win" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="HeroMap">
+        select id,
+               name,
+               times,
+               pic,
+               win
+        from hero
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="HeroMap">
+        select
+        id, name, times, pic, win
+        from hero
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="times != null">
+                and times = #{times}
+            </if>
+            <if test="pic != null">
+                and pic = #{pic}
+            </if>
+            <if test="win != null">
+                and win = #{win}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from hero
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="times != null">
+                and times = #{times}
+            </if>
+            <if test="pic != null">
+                and pic = #{pic}
+            </if>
+            <if test="win != null">
+                and win = #{win}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into hero(name, times, pic, win)
+        values (#{name}, #{times}, #{pic}, #{win})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into hero(name, times, pic, win)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.times}, #{entity.pic}, #{entity.win})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into hero(name, times, pic, win)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.times}, #{entity.pic}, #{entity.win})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        times = values(times),
+        pic = values(pic),
+        win = values(win)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update hero
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="times != null">
+                times = #{times},
+            </if>
+            <if test="pic != null">
+                pic = #{pic},
+            </if>
+            <if test="win != null">
+                win = #{win},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from hero
+        where id = #{id}
+    </delete>
+
+</mapper>
+
